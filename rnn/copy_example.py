@@ -34,8 +34,16 @@ import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 from dataset import Dataset
-
+from vector import vector
 # Create datasets
+dataset_totale= vectors.vettorizzazione()
+train_dataset=dataset_totale[:20]
+test_dataset=dataset_totale[21:25]
+
+#TODO dividerlo in 2 (80% train 20% test)
+#e poi assegnare a train_dataset= 80% e a test_dataset=20%
+#TODO ancora c'è da capire come considerare targets
+
 train_dataset = Dataset(source_file = "data/train/sources.txt", target_file = "data/train/targets.txt")
 test_dataset = Dataset(source_file = "data/test/sources.txt", target_file = "data/test/targets.txt")
 # Create loaders
@@ -136,7 +144,13 @@ class Model1(nn.Module):
             # Concatenate all log-softmax outputs
             x = torch.cat(output, 1)
         return x
+#si toglie
 
+#mseloss
+#torch.nn.mseloss(false)
+mseloss = torch.nn.MSELoss(size_average=False)
+
+"""
 def lstm_softmax_loss(output, target):
     # Merge sequence dimension and batch dimension
     batch_size = output.size(0)
@@ -149,7 +163,7 @@ def lstm_softmax_loss(output, target):
     # Compute standard NLL loss
     loss = F.nll_loss(output, target)
     return loss
-
+"""
 
 # Check test
 if opt.test is None:
@@ -228,7 +242,9 @@ try:
                 # Forward (use target as decoder input for training)
                 output = model(input, target_as_input if split == "train" else None)
                 # Compute loss (training only)
-                loss = criterion(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
+                #=======> al posto di criterion mettere mseloss whatsapp
+                loss = mseloss(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
+                #loss = criterion(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
                 sum_loss += loss.data[0]
                 n_train += 1
                 # Compute accuracy

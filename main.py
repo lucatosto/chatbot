@@ -2,6 +2,7 @@ from vector import vector
 import sys
 
 def main(agrv):
+    print("sono dentro il main")
     a = vector()
     print(a.vettorizzazione)
     pass
