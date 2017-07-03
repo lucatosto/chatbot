@@ -3,7 +3,7 @@ class Options():
     pass
 opt = Options()
 # Training options
-opt.batch_size = 64
+opt.batch_size = 64#===========> devo aumentarlo?
 opt.learning_rate = 0.01
 opt.learning_rate_decay_by = 0.8
 opt.learning_rate_decay_every = 10
@@ -21,13 +21,13 @@ import sys
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
 opt.test = sys.argv[2] if len(sys.argv) > 2 else None
 # Backend options
-opt.no_cuda = True
+opt.no_cuda = True#===> cambiare se si esegue dall'università in false
 
 # Imports
 import os
 import time
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader#=======> noi possiamo dare il nostro vettorefinale o lo dobbiamo adattare a questa classe?
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
@@ -36,7 +36,7 @@ import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 from dataset import Dataset
 from vector import vector
 # Create datasets
-dataset_totale= vectors.vettorizzazione()
+dataset_totale= vectors.vettorizzazione()#====> da rivedere il caricamento dei dati. noi diamo il vettore uscente da vector() già tensorizzato
 train_dataset=dataset_totale[:20]
 test_dataset=dataset_totale[21:25]
 
@@ -44,9 +44,9 @@ test_dataset=dataset_totale[21:25]
 #e poi assegnare a train_dataset= 80% e a test_dataset=20%
 #TODO ancora c'è da capire come considerare targets
 
-train_dataset = Dataset(source_file = "data/train/sources.txt", target_file = "data/train/targets.txt")
-test_dataset = Dataset(source_file = "data/test/sources.txt", target_file = "data/test/targets.txt")
-# Create loaders
+#train_dataset = Dataset(source_file = "data/train/sources.txt", target_file = "data/train/targets.txt")
+#test_dataset = Dataset(source_file = "data/test/sources.txt", target_file = "data/test/targets.txt")
+# Create loaders  questi riconvertono il modello in torch.models
 loaders = {'train': DataLoader(train_dataset, batch_size = opt.batch_size, shuffle = True,  num_workers = opt.data_workers, pin_memory = False if opt.no_cuda else True),
            'test':  DataLoader(test_dataset,  batch_size = opt.batch_size, shuffle = False, num_workers = opt.data_workers, pin_memory = False if opt.no_cuda else True)}
 
@@ -72,13 +72,13 @@ class Model1(nn.Module):
         self.is_cuda = True
         super(Model1, self).cuda()
 
-    def forward(self, x, target_as_input = None):
+    def forward(self, x, target_as_input = None):#========>target_as_input?
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
-        # Initial state
-        h_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))
-        c_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))
+        # Initial state. h0=> deve essere passato come argomento a forward e la funzione deve ritornare il valore dell'hidden state finale cos' da ridarlo come input al forward ciclicamente
+        h_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
+        c_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#c_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial cell state for each element in the batch
         # Check CUDA
         if self.is_cuda:
             h_0 = h_0.cuda(async = True)
@@ -92,7 +92,7 @@ class Model1(nn.Module):
         if self.is_cuda:
             c_0 = c_0.cuda(async = True)
         # If target_as_input is provided (during training), target is input sequence; otherwise output is fed back as input
-#for qua
+        #for qua
         if target_as_input is not None:
             # Compute decoder output
             x = self.decoder(target_as_input, (h_0, c_0))[0].contiguous()
@@ -103,7 +103,7 @@ class Model1(nn.Module):
             x = self.dec_to_output(x)
             #print(x.data.size())
             # Compute softmax
-            x = F.log_softmax(x)
+            x = F.log_softmax(x)# ====>cosa fa? serve ancora?
             #print(x.data.size())
             x = x.view(batch_size, target_as_input.size(1), -1)
         else:
@@ -201,7 +201,7 @@ else:
     sys.exit(0)
 
 # Setup loss criterion
-criterion = lstm_softmax_loss
+criterion = lstm_softmax_loss#======> non serve più
 
 # Setup CUDA
 if not opt.no_cuda:
@@ -227,7 +227,7 @@ try:
             # Set mode
             if split == "train":
                 model.train()
-            else:
+            else:#=====> a noi interessa solo allenare il modello. quindi questo else non serve.
                 model.eval()
             # Process all training batches
             for i, (input, target) in enumerate(loaders[split]):
@@ -236,7 +236,7 @@ try:
                     input = input.cuda(async = True)
                     target = target.cuda(async = True)
                 # Wrap for autograd
-                input = Variable(input, volatile = (split != "train"))
+                input = Variable(input, volatile = (split != "train"))#mettendo l'input qui dentro autograd fa si che venga wrappato e reso adatto per l'allenamento
                 target_as_input = Variable(target[:, :-1, :], volatile = (split != "train"))
                 target_as_target = Variable(target[:, 1:, :], volatile = (split != "train"))
                 # Forward (use target as decoder input for training)
@@ -251,7 +251,7 @@ try:
                 if split != "train": # and epoch > 10:
                     # Get one-hot indices of output and target
                     _,output_idx = output.data.max(2)
-                    output_idx = output_idx.squeeze().cpu()
+                    output_idx = output_idx.squeeze().cpu()#Returns a Tensor with all the dimensions of input of size 1 removed.
                     _,target_idx = target_as_target.data.max(2)
                     target_idx = target_idx.squeeze().cpu()
                     # Compute length of each sequence

@@ -1,10 +1,9 @@
 from vector import vector
 import sys
 
-def main(agrv):
-    print("sono dentro il main")
+def main(argv):
     a = vector()
-    print(a.vettorizzazione)
+    print(len(a))
     pass
 
 if __name__ == "__main__":
