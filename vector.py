@@ -11,8 +11,9 @@ from CornellData import CornellData
 class vector:
     def vettorizzazione():
         a = CornellData()
-        listaconversazioni = a.loadConversations(os.path.join(dirName, "movie_conversations.txt"), MOVIE_CONVERSATIONS_FIELDS)
         MOVIE_CONVERSATIONS_FIELDS = ["character1ID","character2ID","movieID","utteranceIDs"]
+        dirName='data/'
+        listaconversazioni = a.loadConversations(os.path.join(dirName, "movie_conversations.txt"), MOVIE_CONVERSATIONS_FIELDS)
         token = torch.FloatTensor(1,300)
         token.fill_(0)
 
@@ -30,7 +31,7 @@ class vector:
         iniziobattuta = torch.cat([token, inizio], 1)
 
         finebattuta = torch.cat([token, fine], 1)
-
+        p=torch.FloatTensor(1,300)
         vettorefinale=[]
         for conversazione in listaconversazioni:
             vettorebattute=[]
@@ -50,5 +51,4 @@ class vector:
                 vettoreparole = torch.cat([vettoreparole, finebattuta])
                 vettorebattute.append(vettoreparole)
             vettorefinale.append(vettorebattute)
-
         return vettorefinale
