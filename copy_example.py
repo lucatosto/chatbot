@@ -3,13 +3,13 @@ class Options():
     pass
 opt = Options()
 # Training options
-opt.batch_size = 64#===========> devo aumentarlo?
+opt.batch_size = 64
 opt.learning_rate = 0.01
 opt.learning_rate_decay_by = 0.8
 opt.learning_rate_decay_every = 10
 opt.weight_decay = 5e-4
 opt.momentum = 0.9
-opt.data_workers = 0 # load on main thread
+opt.data_workers = 0
 opt.epochs = 1000
 # Checkpoint options
 opt.save_every = 20
@@ -21,33 +21,25 @@ import sys
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
 opt.test = sys.argv[2] if len(sys.argv) > 2 else None
 # Backend options
-opt.no_cuda = True#===> cambiare se si esegue dall'università in false
-
+opt.no_cuda = True #False if use cuda gpu
 # Imports
 import os
 import time
 import torch
-from torch.utils.data import DataLoader#=======> noi possiamo dare il nostro vettorefinale o lo dobbiamo adattare a questa classe?
+from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
-#from dataset import Dataset
+
 from vector import vector
+
 # Create datasets
-dataset_totale= vector.vettorizzazione()#====> da rivedere il caricamento dei dati. noi diamo il vettore uscente da vector() già tensorizzato
+dataset_totale= vector.vettorizzazione()
 train_dataset=dataset_totale[:20]
 test_dataset=dataset_totale[21:25]
 
-#TODO dividerlo in 2 (80% train 20% test)
-#e poi assegnare a train_dataset= 80% e a test_dataset=20%
-#TODO ancora c'è da capire come considerare targets
-
-#train_dataset = Dataset(source_file = "data/train/sources.txt", target_file = "data/train/targets.txt")
-#test_dataset = Dataset(source_file = "data/test/sources.txt", target_file = "data/test/targets.txt")
-# Create loaders  questi riconvertono il modello in torch.models
-# Define model
 class Model1(nn.Module):
 
     def __init__(self, input_size, sos_idx, eos_idx, encoder_layers = 1, lstm_size = 128):
@@ -69,29 +61,22 @@ class Model1(nn.Module):
         self.is_cuda = True
         super(Model1, self).cuda()
 
-    def forward(self, x, h, target_as_input):#========>target_as_input? h aggiunto da noi perchè l'hidden del decoder deve essere dato come input a forward
+    def forward(self, x, h, target_as_input):
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
         # Initial state
-        #h = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
         c_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#c_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial cell state for each element in the batch
         # Check CUDA
         if self.is_cuda:
-            #h_0 = h_0.cuda(async = True)
             c_0 = c_0.cuda(async = True)
         # Compute encoder output (hidden layer at last time step)
-        #print(x.size())
-        #print(h.size())
-        #print(c_0.size())
-        x = self.encoder(x, (h, c_0))[0][:,-1,:]#-1 perchè prende solo l'ultimo valore di h0 riferito all'ultimo hidden layer
+        x = self.encoder(x, (h, c_0))[0][:,-1,:]
         # Prepare decoder state
         h_0 = x.unsqueeze(0) # Adds num_layers dimension
         c_0 = Variable(torch.zeros(h_0.size()))
 
-
         # Check CUDA
-
         if self.is_cuda:
             c_0 = c_0.cuda(async = True)
         # If target_as_input is provided (during training), target is input sequence; otherwise output is fed back as input
@@ -105,13 +90,13 @@ class Model1(nn.Module):
             x = self.dec_to_output(x)
             #print(x.data.size())
             # Compute softmax
-            x = F.log_softmax(x)# ====>cosa fa? serve ancora?   SI TOGLIE
+            x = F.log_softmax(x)
             #print(x.data.size())
             x = x.view(batch_size, target_as_input.size(1), -1)
         else:
             # Initialize input
             input = torch.zeros(batch_size, 1, self.input_size)
-            input[:, :, self.sos_idx].fill_(1)   #dobbiamo toglierlo?
+            input[:, :, self.sos_idx].fill_(1)
             input = Variable(input)
             if self.is_cuda:
                 input = input.cuda()
@@ -120,7 +105,7 @@ class Model1(nn.Module):
             # Initialize list of outputs at each time step
             output = []
             # Process until EOS is found or limit is reached
-            for i in range(0, 200): # TODO this must be dependent on dataset  #mettere 200 per stare larghi
+            for i in range(0, 200): #this must be dependent on dataset
                 # Get decoder output at this time step
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
@@ -146,14 +131,8 @@ class Model1(nn.Module):
             # Concatenate all log-softmax outputs
             x = torch.cat(output, 1)
         return x, h_0
-#si toglie
-
 #mseloss
-#torch.nn.mseloss(false)
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
-
-# Setup loss criterion
-#criterion = lstm_softmax_loss#======> NON SERVE PIU'
 
 # Setup CUDA
 if not opt.no_cuda:
@@ -163,7 +142,6 @@ if not opt.no_cuda:
 update_every = 100
 cnt = 0
 # Start training
-#per adattare sos e eos ai nostri dati
 token = torch.FloatTensor(1,300)
 token.fill_(0)
 uno = torch.FloatTensor(1,1)
@@ -173,8 +151,10 @@ zero.fill_(0)
 inizio = torch.cat([uno, zero], 1)
 fine = torch.cat([zero, uno], 1)
 fineparola = torch.cat([zero, zero], 1)
+
 sos_idx = torch.cat([token, inizio], 1)
 eos_idx = torch.cat([token, fine], 1)
+
 model_options = {'input_size': train_dataset[0][0].size(1), 'sos_idx': sos_idx, 'eos_idx': eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
 model = Model1(**model_options)
 optimizer = torch.optim.SGD(model.parameters(), lr = opt.learning_rate, momentum = opt.momentum, weight_decay = opt.weight_decay)
@@ -204,10 +184,6 @@ try:
                 for b in range(0, len(conv)-1):
                     input = conv[b]
                     target = conv[b+1]
-                    #print("tARGET")
-                    #print(target.size())
-                    #print("input size")
-                    #print(input.size())
                     input = input.unsqueeze(0)
                     target = target.unsqueeze(0)
                     if not opt.no_cuda:
@@ -221,9 +197,7 @@ try:
                     output, h_nuova = model(input, Variable(h), target_as_input)
                     h = h_nuova.data.clone()
                     # Compute loss (training only)
-                    #=======> al posto di criterion mettere mseloss
                     loss = mseloss(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
-                    #loss = criterion(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))# AGGIUNGI MSELOSS
                     sum_loss += loss.data[0]
                     n_train += 1
                     optimizer.zero_grad()

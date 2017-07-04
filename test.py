@@ -1,26 +1,18 @@
-from vector import vector
 import sys
-import os
-import ast
 import string
+from vector import vector
 from gensim.models import Word2Vec
-import re
-import gensim
-import numpy
-import torch
 from CornellData import CornellData
 
-def main(argv):
-    a = vector()
-    print("Ciao, inizia la conversazione")
-    print("..")
-    while()
-            frase f = scanf()
-            frasevett = model(f)
+print("ChatBot run!")
 
-            risposta = Model1(frasevett)
-            print(risposta)
-    pass
-
-if __name__ == "__main__":
-    main(sys.argv)
+try:
+    while True:
+        domanda = input("You: ")
+        #Word2Vec
+        p = model[domanda]
+        print("vettorizzata: "+ p) #to be removed
+        p = Model1(p)
+        print("ChatBot: " +p)
+except KeyboardInterrupt:
+    print('\nBye bye!')
