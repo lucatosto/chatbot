@@ -13,9 +13,6 @@ def main(argv):
 
             risposta = Model1(frasevett)
             print(risposta)
-
-
-
     pass
 
 if __name__ == "__main__":
