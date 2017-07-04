@@ -33,7 +33,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
-from dataset import Dataset
+#from dataset import Dataset
 from vector import vector
 # Create datasets
 dataset_totale= vector.vettorizzazione()#====> da rivedere il caricamento dei dati. noi diamo il vettore uscente da vector() già tensorizzato
@@ -47,9 +47,6 @@ test_dataset=dataset_totale[21:25]
 #train_dataset = Dataset(source_file = "data/train/sources.txt", target_file = "data/train/targets.txt")
 #test_dataset = Dataset(source_file = "data/test/sources.txt", target_file = "data/test/targets.txt")
 # Create loaders  questi riconvertono il modello in torch.models
-loaders = {'train': DataLoader(train_dataset, batch_size = opt.batch_size, shuffle = True,  num_workers = opt.data_workers, pin_memory = False if opt.no_cuda else True),
-           'test':  DataLoader(test_dataset,  batch_size = opt.batch_size, shuffle = False, num_workers = opt.data_workers, pin_memory = False if opt.no_cuda else True)}
-
 # Define model
 class Model1(nn.Module):
 
@@ -72,23 +69,29 @@ class Model1(nn.Module):
         self.is_cuda = True
         super(Model1, self).cuda()
 
-    def forward(self, x, h):#========>target_as_input? h aggiunto da noi perchè l'hidden del decoder deve essere dato come input a forward
+    def forward(self, x, h, target_as_input):#========>target_as_input? h aggiunto da noi perchè l'hidden del decoder deve essere dato come input a forward
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
         # Initial state
-        h_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
+        #h = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
         c_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#c_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial cell state for each element in the batch
         # Check CUDA
         if self.is_cuda:
-            h_0 = h_0.cuda(async = True)
+            #h_0 = h_0.cuda(async = True)
             c_0 = c_0.cuda(async = True)
         # Compute encoder output (hidden layer at last time step)
-        x = self.encoder(x, (h_0, c_0))[0][:,-1,:]#-1 perchè prende solo l'ultimo valore di h0 riferito all'ultimo hidden layer
+        #print(x.size())
+        #print(h.size())
+        #print(c_0.size())
+        x = self.encoder(x, (h, c_0))[0][:,-1,:]#-1 perchè prende solo l'ultimo valore di h0 riferito all'ultimo hidden layer
         # Prepare decoder state
         h_0 = x.unsqueeze(0) # Adds num_layers dimension
         c_0 = Variable(torch.zeros(h_0.size()))
+
+
         # Check CUDA
+
         if self.is_cuda:
             c_0 = c_0.cuda(async = True)
         # If target_as_input is provided (during training), target is input sequence; otherwise output is fed back as input
@@ -142,7 +145,7 @@ class Model1(nn.Module):
                     input = input.cuda(async = True)
             # Concatenate all log-softmax outputs
             x = torch.cat(output, 1)
-        return x, h
+        return x, h_0
 #si toglie
 
 #mseloss
@@ -225,6 +228,8 @@ eos_idx = torch.cat([token, fine], 1)
 model_options = {'input_size': train_dataset[0][0].size(1), 'sos_idx': sos_idx, 'eos_idx': eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
 model = Model1(**model_options)
 optimizer = torch.optim.SGD(model.parameters(), lr = opt.learning_rate, momentum = opt.momentum, weight_decay = opt.weight_decay)
+model.train()
+
 
 try:
     for epoch in range(1, opt.epochs+1):
@@ -238,72 +243,46 @@ try:
         sum_length_accuracy = 0 # test only
         sum_match_accuracy = 0 # test only
         n_test = 0 # for averaging
-        for split in ["train", "test"]:
+
+        for split in ["train"]:
             # Set mode
-            if split == "train":
-                model.train()
-            else:#=====> a noi interessa solo allenare il modello. quindi questo else non serve.
-                model.eval()
             # Process all training batches
-            for i, (input, target) in enumerate(loaders[split]):#ERRORE DI DIMENSIONE QUI
-                # Check CUDA
-                if not opt.no_cuda:
-                    input = input.cuda(async = True)
-                    target = target.cuda(async = True)
-                # Wrap for autograd
-                input = Variable(input, volatile = (split != "train"))#mettendo l'input qui dentro autograd fa si che venga wrappato e reso adatto per l'allenamento
-                target_as_input = Variable(target[:, :-1, :], volatile = (split != "train"))
-                target_as_target = Variable(target[:, 1:, :], volatile = (split != "train"))
-                # Forward (use target as decoder input for training)
-                output = model(input, target_as_input if split == "train" else None)
-                # Compute loss (training only)
-                #=======> al posto di criterion mettere mseloss
-                loss = mseloss(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
-                #loss = criterion(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))# AGGIUNGI MSELOSS
-                sum_loss += loss.data[0]
-                n_train += 1
-                # Compute accuracy
-                if split != "train": # and epoch > 10:
-                    # Get one-hot indices of output and target
-                    _,output_idx = output.data.max(2)
-                    output_idx = output_idx.squeeze().cpu()#Returns a Tensor with all the dimensions of input of size 1 removed.
-                    _,target_idx = target_as_target.data.max(2)
-                    target_idx = target_idx.squeeze().cpu()
-                    # Compute length of each sequence
-                    _,output_lengths = (output_idx == train_dataset.eos_idx).max(1)
-                    _,target_lengths = (target_idx == train_dataset.eos_idx).max(1)
-                    # Compute length accuracy
-                    length_accuracy = torch.mean(output_lengths.float()/target_lengths.float())
-                    # Compute matching lengths
-                    match_lengths = torch.min(output_lengths, target_lengths)
-                    # Compute matching degrees
-                    if match_lengths.max() == 0:
-                        match_degrees = torch.zeros(match_lengths.nelement(), 1)
-                    else:
-                        max_common_length = match_lengths.max()
-                        output_idx = output_idx[:, :max_common_length]
-                        target_idx = target_idx[:, :max_common_length]
-                        match_degrees = (output_idx == target_idx).cumsum(1).float()/(match_lengths.float().expand_as(output_idx))
-                    # Fix infinity (when length is 0)
-                    match_lengths[match_lengths == 0] = 1
-                    match_degrees[match_degrees == float('inf')] = 0
-                    # Get match degrees at corresponding lengths
-                    match_degrees = match_degrees.view(-1)[(torch.arange(0, match_degrees.size(0))*match_degrees.size(1)).long() + match_lengths.long() - 1]
-                    # Compute match accuracy
-                    match_accuracy = match_degrees.mean()
-                    # Update monitoring variables
-                    sum_length_accuracy += length_accuracy
-                    sum_match_accuracy += match_accuracy
-                    n_test += 1
-                # Backward and optimize
-                else:
+
+            for conv in train_dataset:
+                h = torch.zeros(opt.encoder_layers, 1, opt.lstm_size)
+
+                for b in range(0, len(conv)-1):
+                    input = conv[b]
+                    target = conv[b+1]
+                    #print("tARGET")
+                    #print(target.size())
+                    #print("input size")
+                    #print(input.size())
+                    input = input.unsqueeze(0)
+                    target = target.unsqueeze(0)
+                    if not opt.no_cuda:
+                        input = input.cuda(async = True)
+                        target = target.cuda(async = True)
+                    # Wrap for autograd
+                    input = Variable(input, volatile = (split != "train"))#mettendo l'input qui dentro autograd fa si che venga wrappato e reso adatto per l'allenamento
+                    target_as_input = Variable(target[:, :-1, :], volatile = (split != "train"))
+                    target_as_target = Variable(target[:, 1:, :], volatile = (split != "train"))
+                    # Forward (use target as decoder input for training)
+                    output, h_nuova = model(input, Variable(h), target_as_input)
+                    h = h_nuova.data.clone()
+                    # Compute loss (training only)
+                    #=======> al posto di criterion mettere mseloss
+                    loss = mseloss(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))
+                    #loss = criterion(output, target_as_target) if split == "train" else Variable(torch.Tensor([-1]))# AGGIUNGI MSELOSS
+                    sum_loss += loss.data[0]
+                    n_train += 1
                     optimizer.zero_grad()
                     loss.backward()
                     optimizer.step()
-                # Show results every once in a while
-                cnt += 1
-                if cnt % update_every == 0:
-                    print("Epoch {0}: L = {1:.4f}, LA = {2:.4f}, MA = {3:.4f}\r".format(epoch, sum_loss/n_train, sum_length_accuracy/n_test if n_test > 0 else -1, sum_match_accuracy/n_test if n_test > 0 else -1), end = '')
+                    # Show results every once in a while
+                    cnt += 1
+                    if cnt % update_every == 0:
+                        print("Epoch {0}: L = {1:.4f}, LA = {2:.4f}, MA = {3:.4f}\r".format(epoch, sum_loss/n_train, sum_length_accuracy/n_test if n_test > 0 else -1, sum_match_accuracy/n_test if n_test > 0 else -1), end = '')
         # Print info at the end of the epoch
         print("Epoch {0}: L = {1:.4f}, LA = {2:.4f}, MA = {3:.4f}".format(epoch, sum_loss/n_train, sum_length_accuracy/n_test if n_test > 0 else -1, sum_match_accuracy/n_test if n_test > 0 else -1))
         # Save checkpoint
