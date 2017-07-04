@@ -1,7 +1,14 @@
 from vector import vector
 import sys
-#import CornellData, copy_Example
-#
+import os
+import ast
+import string
+from gensim.models import Word2Vec
+import re
+import gensim
+import numpy
+import torch
+from CornellData import CornellData
 
 def main(argv):
     a = vector()

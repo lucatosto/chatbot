@@ -47,7 +47,6 @@ class vector:
                         pass
                     parolatokenizzata = torch.cat([p, fineparola], 1)
                     vettoreparole = torch.cat([vettoreparole, parolatokenizzata])
-                    #vettoreparole = vettoreparole.view(len(battuta),302)
                 vettoreparole = torch.cat([vettoreparole, finebattuta])
                 vettorebattute.append(vettoreparole)
             vettorefinale.append(vettorebattute)
