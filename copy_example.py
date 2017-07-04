@@ -152,56 +152,6 @@ class Model1(nn.Module):
 #torch.nn.mseloss(false)
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
 
-"""
-def lstm_softmax_loss(output, target):
-    # Merge sequence dimension and batch dimension
-    batch_size = output.size(0)
-    seq_size = output.size(1)
-    output = output.view(batch_size*seq_size, -1)
-    target = target.contiguous().view(batch_size*seq_size, -1)
-    # Convert targets to "class" indeces
-    _,target = target.max(1)
-    target = target.squeeze()
-    # Compute standard NLL loss
-    loss = F.nll_loss(output, target)
-    return loss
-"""
-"""
-# Check test
-if opt.test is None:
-    # Create model/optimizer for training
-    model_options = {'input_size': train_dataset[0][0].size(1), 'sos_idx': train_dataset.sos_idx, 'eos_idx': train_dataset.eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
-    model = Model1(**model_options)
-    optimizer = torch.optim.SGD(model.parameters(), lr = opt.learning_rate, momentum = opt.momentum, weight_decay = opt.weight_decay)
-else:
-    # Load checkpoint
-    checkpoint = torch.load(opt.model)
-    # Load parameters
-    model_options = checkpoint["model_options"]
-    # Create model
-    model = Model1(**model_options)
-    model.load_state_dict(checkpoint["model_state"])
-    # Define input sequence
-    input = [int(x) for x in opt.test.split(" ")]
-    # Convert to one-hot
-    input_onehot = torch.zeros(1, train_dataset.seq_len, train_dataset.vocab_len)
-    input_onehot[0, 0, train_dataset.sos_idx] = 1
-    for i in range(1, train_dataset.seq_len):
-        if i <= len(input):
-            input_onehot[0, i, input[i-1]] = 1
-        else:
-            input_onehot[0, i, train_dataset.eos_idx] = 1
-    input = input_onehot
-    # Feed to model
-    model.cuda()
-    model.eval()
-    output = model(Variable(input.cuda(), volatile = True))
-    # Convert to symbols
-    _,output = output.data.max(2)
-    output = output.squeeze()
-    print(output.tolist()[:-1])
-    sys.exit(0)
-"""
 # Setup loss criterion
 #criterion = lstm_softmax_loss#======> NON SERVE PIU'
 
