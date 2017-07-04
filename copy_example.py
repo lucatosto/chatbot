@@ -33,7 +33,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
-from dataset import Dataset
+#from dataset import Dataset
 from vector import vector
 # Create datasets
 dataset_totale= vector.vettorizzazione()#====> da rivedere il caricamento dei dati. noi diamo il vettore uscente da vector() già tensorizzato
