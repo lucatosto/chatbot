@@ -9,6 +9,7 @@ import torch
 from CornellData import CornellData
 
 class vector:
+    model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
     def vettorizzazione():
         a = CornellData()
         MOVIE_CONVERSATIONS_FIELDS = ["character1ID","character2ID","movieID","utteranceIDs"]
