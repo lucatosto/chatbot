@@ -4,7 +4,7 @@ class Options():
 opt = Options()
 # Training options
 opt.batch_size = 64
-opt.learning_rate = 0.01
+opt.learning_rate = 0.001
 opt.learning_rate_decay_by = 0.8
 opt.learning_rate_decay_every = 10
 opt.weight_decay = 5e-4
