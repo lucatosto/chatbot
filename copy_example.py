@@ -36,7 +36,8 @@ import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 from vector import vector
 
 # Create datasets
-dataset_totale= vector.vettorizzazione()
+a = vector()
+dataset_totale= a.vettorizzazione()
 train_dataset=dataset_totale[:20]
 test_dataset=dataset_totale[21:25]
 
