@@ -11,7 +11,7 @@ from CornellData import CornellData
 class vector:
     #model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
     model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-    def vettorizzazione():
+    def vettorizzazione(self):
         a = CornellData()
         MOVIE_CONVERSATIONS_FIELDS = ["character1ID","character2ID","movieID","utteranceIDs"]
         dirName='data/'
@@ -35,12 +35,14 @@ class vector:
         finebattuta = torch.cat([token, fine], 1)
         p=torch.FloatTensor(1,300)
         vettorefinale=[]
+        print("sono prima del for")
         for conversazione in listaconversazioni:
             vettorebattute=[]
             for battuta in conversazione:
                 vettoreparole=torch.FloatTensor()
                 vettoreparole = torch.cat([iniziobattuta, vettoreparole])
                 for parola in battuta:
+                    print(parola)
                     try:
                         p = model[parola]
                         p = torch.from_numpy(p)

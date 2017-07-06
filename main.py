@@ -3,7 +3,8 @@ import sys
 
 def main(argv):
     a = vector()
-    print(len(a))
+    a.vettorizzazione()
+    print("ho finito")
     pass
 
 if __name__ == "__main__":
