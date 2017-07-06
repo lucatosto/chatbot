@@ -10,7 +10,7 @@ opt.learning_rate_decay_every = 10
 opt.weight_decay = 5e-4
 opt.momentum = 0.9
 opt.data_workers = 0
-opt.epochs = 1000
+opt.epochs = 10
 # Checkpoint options
 opt.save_every = 20
 # Model options
