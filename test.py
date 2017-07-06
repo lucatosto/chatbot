@@ -7,7 +7,7 @@ import os
 import ast
 import re
 import gensim
-import numpy
+import numpy as np
 import torch
 
 
@@ -20,11 +20,12 @@ try:
     while True:
         domanda = input("You: ")
         #Word2Vec
-
-        p = model[domanda]
+        #p = model[p]
+        risposta = model[domanda]  #Questo model sarà Model1 quello allenato. e 'domanda' sarà 'p'
+        model_word_vector = np.array( risposta , dtype='f')
+        most_similar_words = model.most_similar( [ model_word_vector ], [], 1)
 #        print("vettorizzata: "+ p) #to be removed
 
-#        p = Model1(p)
-        print("ChatBot: " +domanda)
+        print("ChatBot: " +most_similar_words)
 except KeyboardInterrupt:
     print('\nBye bye!')
