@@ -136,8 +136,8 @@ class Model1(nn.Module):
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
 
 # Setup CUDA
-if not opt.no_cuda:
-    model.cuda()
+#if not opt.no_cuda:
+#    model.cuda()
 
 # Monitoring options
 update_every = 100
