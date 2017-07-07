@@ -14,18 +14,17 @@ import torch
 print("ChatBot run!")
 
 model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model2 = TODO import our pth model
 
 try:
     while True:
         domanda = input("You: ")
-        #Word2Vec
-        #p = model[p]
-        risposta = model[domanda]  #Questo model sarà Model1 quello allenato. e 'domanda' sarà 'p'
-        model_word_vector = np.array( risposta , dtype='f')
-        most_similar_words = model.most_similar( [ model_word_vector ], [], 1)
-#        print("vettorizzata: "+ p) #to be removed
 
-        print("ChatBot: " +most_similar_words)
+        domandavettorizzata = model[domanda]
+
+        rispostavettorizzata = np.array( domandavettorizzata , dtype='f')
+        risposta = model.most_similar( [ rispostavettorizzata ], [], 1)
+
+        print("ChatBot: " +risposta)
 except KeyboardInterrupt:
     print('\nBye bye!')

@@ -12,7 +12,7 @@ opt.momentum = 0.9
 opt.data_workers = 0
 opt.epochs = 10
 # Checkpoint options
-opt.save_every = 20
+opt.save_every = 2
 # Model options
 opt.encoder_layers = 1
 opt.lstm_size = 1024
@@ -136,8 +136,8 @@ class Model1(nn.Module):
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
 
 # Setup CUDA
-#if not opt.no_cuda:
-#    model.cuda()
+if not opt.no_cuda:
+    model.cuda()
 
 # Monitoring options
 update_every = 100
