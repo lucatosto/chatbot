@@ -155,8 +155,8 @@ fineparola = torch.cat([zero, zero], 1)
 
 sos_idx = torch.cat([token, inizio], 1)
 eos_idx = torch.cat([token, fine], 1)
-
-model_options = {'input_size': train_dataset[0][0].size(1), 'sos_idx': sos_idx, 'eos_idx': eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
+model_options = {'input_size': 302, 'sos_idx': sos_idx, 'eos_idx': eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
+#model_options = {'input_size': train_dataset[0][0].size(1), 'sos_idx': sos_idx, 'eos_idx': eos_idx, 'encoder_layers': opt.encoder_layers, 'lstm_size': opt.lstm_size}
 model = Model1(**model_options)
 optimizer = torch.optim.SGD(model.parameters(), lr = opt.learning_rate, momentum = opt.momentum, weight_decay = opt.weight_decay)
 model.train()
