@@ -31,3 +31,4 @@ for parola in domanda:
         pass
     vettoreparole = torch.cat([vettoreparole, p])
 print (vettoreparole)
+
