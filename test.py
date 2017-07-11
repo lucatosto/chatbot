@@ -5,6 +5,7 @@ from CornellData import CornellData
 import gensim
 import numpy as np
 import torch
+import re
 import sys
 import os
 import time
