@@ -21,7 +21,7 @@ import sys
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
 opt.test = sys.argv[2] if len(sys.argv) > 2 else None
 # Backend options
-opt.no_cuda = True #False if use cuda gpu
+opt.no_cuda = False #False if use cuda gpu
 # Imports
 import os
 import time
@@ -136,8 +136,8 @@ class Model1(nn.Module):
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
 
 # Setup CUDA
-#if not opt.no_cuda:
-#    model.cuda()
+if not opt.no_cuda:
+    model.cuda()
 
 # Monitoring options
 update_every = 100
