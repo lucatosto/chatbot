@@ -136,8 +136,7 @@ class Model1(nn.Module):
 mseloss = torch.nn.MSELoss(size_average=False)# AL POSTO DI LSTM_SOFTMAX_LOSS
 
 # Setup CUDA
-if not opt.no_cuda:
-    model.cuda()
+
 
 # Monitoring options
 update_every = 100
@@ -161,6 +160,8 @@ model = Model1(**model_options)
 optimizer = torch.optim.SGD(model.parameters(), lr = opt.learning_rate, momentum = opt.momentum, weight_decay = opt.weight_decay)
 model.train()
 
+if not opt.no_cuda:
+    model.cuda()
 
 try:
     for epoch in range(1, opt.epochs+1):

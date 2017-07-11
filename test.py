@@ -9,14 +9,14 @@ import re
 import gensim
 import numpy as np
 import torch
-import copy_example
+#import copy_example
 
 print("ChatBot run!")
 #load model of gensim google vector
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 model2 = torch.load('checkpoint-2.pth')
-print(model2)
+#print(model2)
 #load model defined in class copy_example
 
 #torch.load({'model_options': model_options, 'model_state': model.state_dict()}, './checkpoint-2.pth')
@@ -34,7 +34,8 @@ try:
         domandavettorizzata = model[domanda]
 
         rispostavettorizzata = np.array( domandavettorizzata , dtype='f')
-        #risposta = model2.most_similar( [ rispostavettorizzata ], [], 1)
+        risposta = model2( [ rispostavettorizzata ], [], 1)
+        gensim.most_similar(risposta)
 
         print("ChatBot: " +risposta[0])
 except KeyboardInterrupt:
