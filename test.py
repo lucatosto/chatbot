@@ -1,4 +1,3 @@
-import sys
 import string
 from vector import vector
 from gensim.models import Word2Vec
@@ -6,7 +5,15 @@ from CornellData import CornellData
 import gensim
 import numpy as np
 import torch
-
+import sys
+import os
+import time
+from torch.utils.data import DataLoader
+from torch.autograd import Variable
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim
+import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 class Model1(nn.Module):
 
     def __init__(self, input_size, sos_idx, eos_idx, encoder_layers = 1, lstm_size = 128):
@@ -98,11 +105,23 @@ class Model1(nn.Module):
             # Concatenate all log-softmax outputs
             x = torch.cat(output, 1)
         return x, h_0
+
+
 checkpoint = torch.load('checkpoint-2.pth')
 model_options = checkpoint["model_options"]
 model2 = Model1(**model_options)
 model2 = model.load_state_dict(checkpoint["model_state"])
 print("ChatBot run!")
+
+domanda = input("You: ")
+domanda_split=[]
+for parola in domanda:
+    domanda_split = parola.split(" ")
+print(domanda_split)
+
+
+"""
+
 #load model of gensim google vector
 model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
 #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
@@ -131,3 +150,4 @@ try:
         print("ChatBot: " +risposta)
 except KeyboardInterrupt:
     print('\nBye bye!')
+"""
