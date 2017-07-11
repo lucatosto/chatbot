@@ -106,15 +106,13 @@ class Model1(nn.Module):
             # Concatenate all log-softmax outputs
             x = torch.cat(output, 1)
         return x, h_0
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+
+model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 checkpoint = torch.load('checkpoint-2.pth')
 model_options = checkpoint["model_options"]
 model2 = Model1(**model_options)
 model2 = model2.load_state_dict(checkpoint["model_state"])
-print("ChatBot run!")
-
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
@@ -135,8 +133,9 @@ for parola in domanda:
     vettoreparole = torch.cat([vettoreparole, p])
 print (vettoreparole)
 
-risposta=model2[vettoreparole]
-print(risposta)
+vettoreparole=model2
+print(vettoreparole)
+
 """
 
 #load model of gensim google vector
