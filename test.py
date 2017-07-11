@@ -16,6 +16,25 @@ print("ChatBot run!")
 model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
 #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 model2 = torch.load('checkpoint-2.pth')
+token = torch.FloatTensor(1,300)
+token.fill_(0)
+uno = torch.FloatTensor(1,1)
+uno.fill_(1)
+zero = torch.FloatTensor(1,1)
+zero.fill_(0)
+inizio = torch.cat([uno, zero], 1)
+fine = torch.cat([zero, uno], 1)
+fineparola = torch.cat([zero, zero], 1)
+
+battuta=[]
+for parola in model2:
+	if (parola==inizio):
+		battuta=parola[i+1]
+	if parola==fine:
+		pass
+return battuta
+
+
 #print(model2)
 #load model defined in class copy_example
 
@@ -32,6 +51,8 @@ try:
         domanda = input("You: ")
 
         domandavettorizzata = model[domanda]
+
+
 
         rispostavettorizzata = np.array( domandavettorizzata , dtype='f')
         risposta = model2( [ rispostavettorizzata ], [], 1)
