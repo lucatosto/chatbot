@@ -6,7 +6,6 @@ from CornellData import CornellData
 import gensim
 import numpy as np
 import torch
-<<<<<<< HEAD
 
 print("ChatBot run!")
 #load model of gensim google vector
@@ -15,7 +14,6 @@ model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-ne
 
 
 model2 = torch.load('checkpoint-2.pth')
-<<<<<<< HEAD
 token = torch.FloatTensor(1,300)
 token.fill_(0)
 uno = torch.FloatTensor(1,1)
@@ -37,10 +35,8 @@ return battuta
 
 #print(model2)
 #load model defined in class copy_example
-=======
 #insert into for structure
 output = model2[:len(model2)-1]
->>>>>>> efee98ef9432dad4c099e7a1ac8f9d4ae8f0a2b1
 
 print(model2)
 
