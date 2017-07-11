@@ -6,6 +6,7 @@ from CornellData import CornellData
 import gensim
 import numpy as np
 import torch
+<<<<<<< HEAD
 
 print("ChatBot run!")
 #load model of gensim google vector
@@ -37,8 +38,11 @@ try:
         #pseudo code
         #domandavettorizzata = model[domanda]
 
-        #rispostavettorizzata = np.array( domandavettorizzata , dtype='f')
-        #risposta = model2.most_similar( [ rispostavettorizzata ], [], 1)
+        domandavettorizzata = model[domanda]
+
+        rispostavettorizzata = np.array( domandavettorizzata , dtype='f')
+        risposta = model2( [ rispostavettorizzata ], [], 1)
+        gensim.most_similar(risposta)
 
         print("ChatBot: " +domanda)
 except KeyboardInterrupt:
