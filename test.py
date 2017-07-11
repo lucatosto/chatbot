@@ -113,28 +113,36 @@ checkpoint = torch.load('checkpoint-2.pth')
 model_options = checkpoint["model_options"]
 model2 = Model1(**model_options)
 model2 = model2.load_state_dict(checkpoint["model_state"])
-
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
+try:
+    stato=[]
+    domanda=input("you: ")
+    domanda = re.findall(r'\w+', domanda)
+    vettoreparole=torch.FloatTensor()
+    for parola in domanda:
+        print(parola)
+        try:
+            p = model[parola]
+            p = torch.from_numpy(p)
+            p = p.view(1, 300)
+            p = torch.cat([p, fineparola],1)
+        except:
+            pass
+        vettoreparole = torch.cat([vettoreparole, p])
+    print (vettoreparole)
+    #pseudo-codice. Non sapendo cosa torna non sappiamo come concatenarlo
+    stato2 = stato + vettoreparole
+    risposta=model2(stato2)
+    print(risposta)
+    vettoreparole2=[]
+    for parola in risposta:
+        output = model.most_similar(positive = parola, topn = 1)
+        vettoreparole2.append(output)
+except KeyboardInterrupt:
+    print('\nBye bye!')
 
-domanda=input("you: ")
-domanda = re.findall(r'\w+', domanda)
-vettoreparole=torch.FloatTensor()
-for parola in domanda:
-    print(parola)
-    try:
-        p = model[parola]
-        p = torch.from_numpy(p)
-        p = p.view(1, 300)
-        p = torch.cat([p, fineparola],1)
-    except:
-        pass
-    vettoreparole = torch.cat([vettoreparole, p])
-print (vettoreparole)
-
-vettoreparole=model2
-print(vettoreparole)
 
 """
 
