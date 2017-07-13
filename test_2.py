@@ -1,20 +1,45 @@
+class Options():
+    pass
+opt = Options()
+# Training options
+opt.batch_size = 64
+opt.learning_rate = 0.001
+opt.learning_rate_decay_by = 0.8
+opt.learning_rate_decay_every = 10
+opt.weight_decay = 5e-4
+opt.momentum = 0.9
+opt.data_workers = 0
+opt.epochs = 10
+# Checkpoint options
+opt.save_every = 2
+# Model options
+opt.encoder_layers = 1
+opt.lstm_size = 1024
+# Test options
+import sys
+opt.model = sys.argv[1] if len(sys.argv) > 1 else None
+opt.test = sys.argv[2] if len(sys.argv) > 2 else None
+# Backend options
+opt.no_cuda = True 
 import string
+import re
+import sys
+import os
+import time
 from vector import vector
 import gensim
 from gensim.models import Word2Vec
 from CornellData import CornellData
 import numpy as np
 import torch
-import re
-import sys
-import os
-import time
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
+
+
 class Model1(nn.Module):
 
     def __init__(self, input_size, sos_idx, eos_idx, encoder_layers = 1, lstm_size = 128):
@@ -107,22 +132,32 @@ class Model1(nn.Module):
             x = torch.cat(output, 1)
         return x, h_0
 
+
+
+#dopo aver richiamato la classe per il model faccio la load
+
+#load gensim model
 model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
 #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-checkpoint = torch.load('checkpoint-2.pth')
-model_options = checkpoint["model_options"]
-model2 = Model1(**model_options)
-model2 = model2.load_state_dict(checkpoint["model_state"])
+
+#load my model
+checkpoint=torch.load('checkpoint-2.pth')
+model_options=checkpoint["model_options"]
+model2=Model1(**model_options)
+model2.load_state_dict(checkpoint["model_state"])
+
+#prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
+#print(fineparola)
 try:
     stato=[]
     domanda=input("you: ")
     domanda = re.findall(r'\w+', domanda)
     vettoreparole=torch.FloatTensor()
     for parola in domanda:
-        print(parola)
+        #print(parola)
         try:
             p = model[parola]
             p = torch.from_numpy(p)
@@ -131,47 +166,15 @@ try:
         except:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
-    print (vettoreparole)
-    #pseudo-codice. Non sapendo cosa torna non sappiamo come concatenarlo
-    stato2 = stato + vettoreparole
-    risposta=model2(stato2)
-    print(risposta)
-    vettoreparole2=[]
-    for parola in risposta:
-        output = model.most_similar(positive = parola, topn = 1)
-        vettoreparole2.append(output)
+    #print (vettoreparole)
+    #stato2=stato+vettoreparole
+    #risposta=torch.FloatTensor()
+    #risposta=Variable(risposta)
+    #h= Variable(torch.zeros(1, 64, 1024))
+    h=torch.FloatTensor()
+    output = model2(Variable(vettoreparole, h, volatile = True))
+    print(output)
+    #risposta=model2(vettoreparole)
+    #print(risposta)
 except KeyboardInterrupt:
-    print('\nBye bye!')
-
-
-"""
-
-#load model of gensim google vector
-model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-
-   #e' giusto?
-#model2[0] SOS   ---- Manca ciclo
-parola = model2[1]
-parola = parola[0:300]
-
-output = model.most_similar(positive = parola, topn = 1)
-#output = model.most_similar(positive = 'hello', topn = 1)   --- torna 'hi'
-print(output)
-
-#output = output.data()
-#output = output.numpy
-
-
-#load model defined in class copy_example
-try:
-    while True:
-        domanda = input("You: ")
-        domandavettorizzata = model[domanda]
-
-        risposta = model2.most_similar(positive = parola, topn = 1)
-
-        print("ChatBot: " +risposta)
-except KeyboardInterrupt:
-    print('\nBye bye!')
-"""
+	print("Bye")
