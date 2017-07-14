@@ -144,24 +144,16 @@ model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-ne
 checkpoint=torch.load('checkpoint-1.pth')
 model_options=checkpoint["model_options"]
 model2=Model1(**model_options)
-
-
 hidden=checkpoint["h"]
-
-
-
-model2.load_state_dict(checkpoint["model_state"])
-
-hidden=checkpoint["h"]
-
-
+modello=model2.load_state_dict(checkpoint["model_state"])
+modello_h=modello.h
+modello_dict=modello.x
 #prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
 #print(fineparola)
 try:
-    stato=[]
     domanda=input("you: ")
     domanda = re.findall(r'\w+', domanda)
     vettoreparole=torch.FloatTensor()
@@ -176,13 +168,20 @@ try:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
     print (vettoreparole)
-    #stato2=stato+vettoreparole
-    #risposta=torch.FloatTensor()
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
-
-    output = model2(Variable(vettoreparole, hidden, volatile = True))
-    print(output)
+    retro=output2.h or modello_h
+    output = modello.forward(modello_dict, retro, vettoreparole)
+    print(output.x)
+            p = torch.cat([p, fineparola],1)
+        except:
+            pass
+        vettoreparole = torch.cat([vettoreparole, p])
+    print (vettoreparole)
+    #risposta=Variable(risposta)
+    #h= Variable(torch.zeros(1, 64, 1024))
+    retro=output2.h or modello_h
+    output2=modello.forward(modello_dict,output.h, vettoreparole)
     #risposta=model2(vettoreparole)
     #print(risposta)
 except KeyboardInterrupt:
