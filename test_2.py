@@ -20,7 +20,7 @@ import sys
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
 opt.test = sys.argv[2] if len(sys.argv) > 2 else None
 # Backend options
-opt.no_cuda = True 
+opt.no_cuda = True
 import string
 import re
 import sys
@@ -133,21 +133,28 @@ class Model1(nn.Module):
         return x, h_0
 
 
-
 #dopo aver richiamato la classe per il model faccio la load
 
 #load gensim model
-model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
 
 checkpoint=torch.load('checkpoint-1.pth')
 model_options=checkpoint["model_options"]
 model2=Model1(**model_options)
-model2.load_state_dict(checkpoint["model_state"])
-model2.load_state_dict(checkpoint["model_state"])
+
+
 hidden=checkpoint["h"]
+
+
+
+model2.load_state_dict(checkpoint["model_state"])
+
+hidden=checkpoint["h"]
+
+
 #prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
@@ -173,9 +180,9 @@ try:
     #risposta=torch.FloatTensor()
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
-    #h=torch.FloatTensor()
-    output=model2(vettoreparole, hidden)
-    print(" parola inserita "+ vettoreparole )
+
+    output = model2(Variable(vettoreparole, hidden, volatile = True))
+    print(output)
     #risposta=model2(vettoreparole)
     #print(risposta)
 except KeyboardInterrupt:
