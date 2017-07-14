@@ -173,7 +173,8 @@ try:
     #print(output.x)
         vettoreparole = torch.cat([vettoreparole, p])
     print (vettoreparole)
-    output=model2(Variable(model2.load_state_dict(checkpoint["model_state"]), Variable(h), vettoreparole))
+    output, h_nuova=model2(vettoreparole, Variable(h), vettoreparole)
+    #output=model2(Variable(model2.load_state_dict(checkpoint["model_state"]), Variable(h), vettoreparole))
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
     #retro=output2.h or modello_h
