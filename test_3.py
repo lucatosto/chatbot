@@ -1,3 +1,20 @@
+import string
+import re
+import sys
+import os
+import time
+from vector import vector
+import gensim
+from gensim.models import Word2Vec
+from CornellData import CornellData
+import numpy as np
+import torch
+from torch.utils.data import DataLoader
+from torch.autograd import Variable
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim
+import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 class Options():
     pass
 opt = Options()
@@ -20,17 +37,10 @@ import sys
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
 opt.test = sys.argv[2] if len(sys.argv) > 2 else None
 # Backend options
-opt.no_cuda = True
-import string
-import re
-import sys
+opt.no_cuda = True #False if use cuda gpu
+# Imports
 import os
 import time
-from vector import vector
-import gensim
-from gensim.models import Word2Vec
-from CornellData import CornellData
-import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
@@ -39,6 +49,13 @@ import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 
+from vector import vector
+
+# Create datasets
+a = vector()
+dataset_totale= a.vettorizzazione()
+train_dataset=dataset_totale[:20]
+test_dataset=dataset_totale[21:25]
 
 class Model1(nn.Module):
 
@@ -132,34 +149,39 @@ class Model1(nn.Module):
             x = torch.cat(output, 1)
         return x, h_0
 
-
-#dopo aver richiamato la classe per il model faccio la load
-
-#load gensim model
 #model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-
-#load my model
 
 checkpoint=torch.load('checkpoint-1.pth')
+#print(checkpoint)
+#model_options=checkpoint["model_options"]
 model_options=checkpoint["model_options"]
 model2=Model1(**model_options)
-
-
 hidden=checkpoint["h"]
-
-
-
 model2.load_state_dict(checkpoint["model_state"])
-
-hidden=checkpoint["h"]
-
+#print(model2.load_state_dict(checkpoint["model_state"]))
 
 #prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
-#print(fineparola)
+try:
+    domanda=input("you: ")
+    domanda = re.findall(r'\w+', domanda)
+    vettoreparole=torch.FloatTensor()
+    for parola in domanda:
+         #print(parola)
+        try:
+            p = model[parola]
+            p = torch.from_numpy(p)
+            p = p.view(1, 300)
+            p = torch.cat([p, fineparola],1)
+        except:
+            pass
+        vettoreparole = torch.cat([vettoreparole, p])
+    print(vettoreparole)
+except:
+    pass
+"""
 try:
     stato=[]
     domanda=input("you: ")
@@ -175,15 +197,15 @@ try:
         except:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
-    print (vettoreparole)
+    #print (vettoreparole)
     #stato2=stato+vettoreparole
     #risposta=torch.FloatTensor()
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
-
-    output = model2(Variable(vettoreparole, hidden, volatile = True))
-    print(output)
+    #h=torch.FloatTensor()
+    output=model(vettoreparole, hidden)
     #risposta=model2(vettoreparole)
     #print(risposta)
 except KeyboardInterrupt:
 	print("Bye")
+"""
