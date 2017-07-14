@@ -136,22 +136,24 @@ class Model1(nn.Module):
 #dopo aver richiamato la classe per il model faccio la load
 
 #load gensim model
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
-
-checkpoint=torch.load('checkpoint-1.pth')
+checkpoint=torch.load('checkpoint-2.pth')
 model_options=checkpoint["model_options"]
 model2=Model1(**model_options)
-hidden=checkpoint["h"]
-modello=model2.load_state_dict(checkpoint["model_state"])
-modello_h=modello.h
-modello_dict=modello.x
+#hidden=checkpoint["h"]
+model2.load_state_dict(checkpoint["model_state"])
+
+
+#modello_h=modello.h
+#modello_dict=modello.x
 #prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
+h=torch.zeros(1,1,1024)
 #print(fineparola)
 try:
     domanda=input("you: ")
@@ -166,22 +168,16 @@ try:
             p = torch.cat([p, fineparola],1)
         except:
             pass
+    #retro=output2.h or modello_h
+    #output = modello.forward(modello_dict, retro, vettoreparole)  
+    #print(output.x)
         vettoreparole = torch.cat([vettoreparole, p])
     print (vettoreparole)
+    output=model2(Variable(model2.load_state_dict(checkpoint["model_state"]), Variable(h), vettoreparole))
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
-    retro=output2.h or modello_h
-    output = modello.forward(modello_dict, retro, vettoreparole)
-    print(output.x)
-            p = torch.cat([p, fineparola],1)
-        except:
-            pass
-        vettoreparole = torch.cat([vettoreparole, p])
-    print (vettoreparole)
-    #risposta=Variable(risposta)
-    #h= Variable(torch.zeros(1, 64, 1024))
-    retro=output2.h or modello_h
-    output2=modello.forward(modello_dict,output.h, vettoreparole)
+    #retro=output2.h or modello_h
+    #output2=modello.forward(modello_dict,output.h, vettoreparole)
     #risposta=model2(vettoreparole)
     #print(risposta)
 except KeyboardInterrupt:
