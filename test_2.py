@@ -141,11 +141,13 @@ model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12A
 #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
-checkpoint=torch.load('checkpoint-2.pth')
+
+checkpoint=torch.load('checkpoint-1.pth')
 model_options=checkpoint["model_options"]
 model2=Model1(**model_options)
 model2.load_state_dict(checkpoint["model_state"])
-
+model2.load_state_dict(checkpoint["model_state"])
+hidden=checkpoint["h"]
 #prepare to test
 zero = torch.FloatTensor(1,1)
 zero.fill_(0)
@@ -166,14 +168,14 @@ try:
         except:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
-    #print (vettoreparole)
+    print (vettoreparole)
     #stato2=stato+vettoreparole
     #risposta=torch.FloatTensor()
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
-    h=torch.FloatTensor()
-    output = model2(Variable(vettoreparole, h, volatile = True))
-    print(output)
+    #h=torch.FloatTensor()
+    output=model2(vettoreparole, hidden)
+    print(" parola inserita "+ vettoreparole )
     #risposta=model2(vettoreparole)
     #print(risposta)
 except KeyboardInterrupt:
