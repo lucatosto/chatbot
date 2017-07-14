@@ -10,9 +10,9 @@ opt.learning_rate_decay_every = 10
 opt.weight_decay = 5e-4
 opt.momentum = 0.9
 opt.data_workers = 0
-opt.epochs = 10
+opt.epochs = 2
 # Checkpoint options
-opt.save_every = 2
+opt.save_every = 1
 # Model options
 opt.encoder_layers = 1
 opt.lstm_size = 1024
@@ -216,6 +216,6 @@ try:
             # Build file name
             checkpoint_path = "checkpoint-" + repr(epoch) + ".pth"
             # Write data
-            torch.save({'model_options': model_options, 'model_state': model.state_dict()}, checkpoint_path)
+            torch.save({'model_options': model_options, 'model_state': model.state_dict(), 'h': h}, checkpoint_path)
 except KeyboardInterrupt:
     print("Interrupted")
