@@ -85,6 +85,11 @@ try:
     target_as_input=target_as_input.unsqueeze(0)
     output, h_nuova=model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
     print(output)
+    vettoreparole2=[]
+    for parola in output:
+        uscita=model.most_similar(positive= parola, topn=1)
+        vettoreparole2.append(uscita)
+    print(vettoreparole2)
     #output=model2(Variable(model2.load_state_dict(checkpoint["model_state"]), Variable(h), vettoreparole))
     #risposta=Variable(risposta)
     #h= Variable(torch.zeros(1, 64, 1024))
