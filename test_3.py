@@ -58,6 +58,7 @@ print("ChatBot Run!")
 try:
     domanda=input("you: ")
     domanda = re.findall(r'\w+', domanda)
+
     vettoreparole=torch.FloatTensor()
 
     for parola in domanda:
@@ -70,23 +71,24 @@ try:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
 
-    vettoreparole=vettoreparole.unsqueeze(0)
-    target_as_input=target_as_input.unsqueeze(0)
+    vettoreparole = vettoreparole.unsqueeze(0)
+    target_as_input = target_as_input.unsqueeze(0)
 
-    output = model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
+    output, h_nuova= model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
 
     output=list(itertools.chain.from_iterable(output))
 
-    output = output[0]  #torch.FloatTensor of size 1x302
+    #output = output[0]  #torch.FloatTensor of size 1x302
+
 
     vettoreparole2=[]
 
-    for parola in output:
-        parola = parola.data.numpy()
-        parola = parola[0:300]
-        uscita = model.most_similar(positive=[parola], topn=1)[0][0]
-        vettoreparole2.append(uscita)
-    print("bot: " +vettoreparole2)
+    output = output.data.numpy()
+    output = output[0:300]
+    uscita = model.most_similar(positive=[output], topn=1)[0[0]
+    print("ciao"+uscita)
+
+
 
 except KeyboardInterrupt:
 	print("Bye")
