@@ -16,6 +16,7 @@ import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 from Model1 import Model1
+import itertools
 
 class Options():
     pass
@@ -74,20 +75,39 @@ try:
     target_as_input=target_as_input.unsqueeze(0)
 
     output = model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
+
+    output=list(itertools.chain.from_iterable(output))
+
+    print("inizio output")
+    output = output[0]
     print(output)
     print("fine output")
+    #vector = model.most_similar(positive=[output, output], topn=1)[0][0]
+    output = output.numpy()
 
-    vettoreparole2=[]
+
+    output = output[0:300]
+    uscita = model.similar_by_vector([output, output], topn=1)
+
+
+    print("inizio vector")
+    print(uscita)
+    print("fine vector")
+
+
+    '''vettoreparole2=[]
     for parola in output:
         print(parola)
-        p = parola.data() #da torch.FloatTensor ad array
 
-        p = p.numpy()
-        
-        uscita = model.similar_by_vector([p, p], topn=1)
+        #parola = parola.numpy()
+
+        output_vec = output_vec[0:300]
+        vector = word2vec_model.most_similar(positive=[output_vec], topn=1)[0][0]
+
+        uscita = model.similar_by_vector([parola, parola], topn=1)
         vettoreparole2.append(uscita)
-    #print(vettoreparole2)
-    print("fine vettoreparole2")
+    print(vettoreparole2)
+    print("fine vettoreparole2")'''
 
 except KeyboardInterrupt:
 	print("Bye")
