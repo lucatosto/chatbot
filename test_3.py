@@ -53,6 +53,8 @@ fineparola = torch.cat([zero, zero], 1)
 h=torch.zeros(1,1,1024)
 target_as_input=torch.zeros(1,302)
 
+print("ChatBot Run!")
+
 try:
     domanda=input("you: ")
     domanda = re.findall(r'\w+', domanda)
@@ -68,9 +70,6 @@ try:
             pass
         vettoreparole = torch.cat([vettoreparole, p])
 
-    print (vettoreparole)
-    print("FINE VETTORE PAROLE")
-
     vettoreparole=vettoreparole.unsqueeze(0)
     target_as_input=target_as_input.unsqueeze(0)
 
@@ -78,36 +77,16 @@ try:
 
     output=list(itertools.chain.from_iterable(output))
 
-    print("inizio output")
-    output = output[0]
-    print(output)
-    print("fine output")
-    #vector = model.most_similar(positive=[output, output], topn=1)[0][0]
-    output = output.numpy()
+    output = output[0]  #torch.FloatTensor of size 1x302
 
+    vettoreparole2=[]
 
-    output = output[0:300]
-    uscita = model.similar_by_vector([output, output], topn=1)
-
-
-    print("inizio vector")
-    print(uscita)
-    print("fine vector")
-
-
-    '''vettoreparole2=[]
     for parola in output:
-        print(parola)
-
-        #parola = parola.numpy()
-
-        output_vec = output_vec[0:300]
-        vector = word2vec_model.most_similar(positive=[output_vec], topn=1)[0][0]
-
-        uscita = model.similar_by_vector([parola, parola], topn=1)
+        parola = parola.data.numpy()
+        parola = parola[0:300]
+        uscita = model.most_similar(positive=[parola], topn=1)[0][0]
         vettoreparole2.append(uscita)
-    print(vettoreparole2)
-    print("fine vettoreparole2")'''
+    print("bot: " +vettoreparole2)
 
 except KeyboardInterrupt:
 	print("Bye")
