@@ -43,8 +43,8 @@ from Model1 import Model1
 #dopo aver richiamato la classe per il model faccio la load
 
 #load gensim model
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
 checkpoint=torch.load('checkpoint-2.pth')
@@ -77,14 +77,14 @@ try:
         except:
             pass
     #retro=output2.h or modello_h
-    #output = modello.forward(modello_dict, retro, vettoreparole)
+    #output = modello.forward(modello_dict, retro, vettoreparole)  
     #print(output.x)
         vettoreparole = torch.cat([vettoreparole, p])
     #print (vettoreparole)
     vettoreparole=vettoreparole.unsqueeze(0)
     target_as_input=target_as_input.unsqueeze(0)
     output, h_nuova=model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
-    print(output)
+    #print(output)
     vettoreparole2=[]
     for parola in output:
         uscita=model.most_similar(positive= parola, topn=1)
