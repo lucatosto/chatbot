@@ -80,7 +80,10 @@ try:
     vettoreparole2=[]
     for parola in output:
         print(parola)
-        p = (parola) #da torch.FloatTensor ad array
+        p = parola.data() #da torch.FloatTensor ad array
+
+        p = p.numpy()
+        
         uscita = model.similar_by_vector([p, p], topn=1)
         vettoreparole2.append(uscita)
     #print(vettoreparole2)
