@@ -84,7 +84,7 @@ try:
     vettoreparole=vettoreparole.unsqueeze(0)
     target_as_input=target_as_input.unsqueeze(0)
     output, h_nuova=model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
-    print(output)
+    #print(output)
     vettoreparole2=[]
     for parola in output:
         uscita=model.most_similar(positive= parola, topn=1)
