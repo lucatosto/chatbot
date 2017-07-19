@@ -106,7 +106,7 @@ class Model1(nn.Module):
             # Initialize list of outputs at each time step
             output = []
             # Process until EOS is found or limit is reached
-            for i in range(0, 200): #this must be dependent on dataset
+            for i in range(0, 50): #this must be dependent on dataset
                 # Get decoder output at this time step
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc

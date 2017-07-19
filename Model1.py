@@ -23,7 +23,7 @@ class Model1(nn.Module):
         super(Model1, self).__init__()
         # Set attributes
         self.is_cuda = False
-        self.input_size = input_size
+        self.input_size = 302
         self.encoder_layers = encoder_layers
         self.lstm_size = lstm_size
         self.sos_idx = sos_idx
@@ -38,6 +38,7 @@ class Model1(nn.Module):
         super(Model1, self).cuda()
 
     def forward(self, x, h, target_as_input):
+        model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
@@ -71,7 +72,7 @@ class Model1(nn.Module):
             x = x.view(batch_size, target_as_input.size(1), -1)
         else:
             # Initialize input
-            input = torch.zeros(batch_size, 1, self.input_size)
+            input = torch.zeros(1, 1, self.input_size)
             input[:, :, self.sos_idx].fill_(1)
             input = Variable(input)
             if self.is_cuda:
@@ -81,14 +82,15 @@ class Model1(nn.Module):
             # Initialize list of outputs at each time step
             output = []
             # Process until EOS is found or limit is reached
-            for i in range(0, 200): #this must be dependent on dataset
+            for i in range(0, 50): #this must be dependent on dataset
                 # Get decoder output at this time step
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
                 # Compute output
-                o2 = self.dec_to_output(o.view(-1, self.lstm_size))
+                o2=o2.data.numpy()
+                o2=model.most_similar(positive=[o2], topn=1)[0][0]
                 # Compute log-softmax
-                o2 = F.log_softmax(o2)
+                #o2 = F.log_softmax(o2)
                 # View as sequence and add to outputs
                 o2 = o2.view(batch_size, 1, -1)
                 output.append(o2)
