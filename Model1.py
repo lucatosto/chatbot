@@ -86,7 +86,7 @@ class Model1(nn.Module):
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
                 # Compute output
-                o2=o2.data.numpy()
+                o2=o.data.numpy()
                 o2=model.most_similar(positive=[o2], topn=1)[0][0]
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
@@ -96,8 +96,6 @@ class Model1(nn.Module):
                 # Compute predicted outputs
                 output_idx = o2.data.max(2)[1].squeeze()
                 # Check all words are in EOS
-                if (output_idx == self.eos_idx).all():
-                    break
                 # Compute input for next step    l'uscita del primo hidden layer
                 input = torch.zeros(batch_size, 1, self.input_size)
                 for j in range(0, batch_size):
