@@ -84,9 +84,12 @@ try:
     output=output[0:300]
     uscita=model.most_similar(positive=[output], topn=1)[0][0]
     print("uscita " + uscita)
+    h = h_nuova
 
 except KeyboardInterrupt:
 	print("Bye")
+    pass
+
 """
     for parola in output:
         parola = parola.data.numpy()
