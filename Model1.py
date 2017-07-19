@@ -86,9 +86,9 @@ class Model1(nn.Module):
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
                 # Compute output
+                o=o.unsqueeze(0)
                 o2=o.data.numpy()
                 o2=o2[0:300]
-                o2=o2.unsqueeze(0)
                 o2=model.most_similar(positive=[o2], topn=1)[0][0]
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
