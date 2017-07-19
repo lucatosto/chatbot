@@ -24,7 +24,7 @@ opt = Options()
 
 # Model options
 opt.encoder_layers = 1
-opt.lstm_size = 1024
+opt.lstm_size = 300
 
 # Test options
 opt.model = sys.argv[1] if len(sys.argv) > 1 else None
@@ -50,7 +50,7 @@ zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
 
-h=torch.zeros(1,1,1024)
+h=torch.zeros(1,1,300)
 target_as_input=torch.zeros(1,302)
 
 print("ChatBot Run!")
