@@ -85,10 +85,12 @@ class Model1(nn.Module):
                 # Get decoder output at this time step
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
-                # Compute output
-                o=o.squeeze(0)
+                o = o.view(-1, self.lstm_size)
+                #print(x.data.size())
+                o = self.dec_to_output(o)
                 o2=o.data.numpy()
                 o2=o2[0:300]
+                print(o2.shape)
                 o2=model.most_similar(positive=[o2], topn=1)[0][0]
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
