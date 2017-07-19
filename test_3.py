@@ -39,7 +39,7 @@ opt.no_cuda = True
 model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
-checkpoint=torch.load('checkpoint-1.pth')
+checkpoint=torch.load('checkpoint-10.pth')
 model_options=checkpoint["model_options"]
 
 model2=Model1(**model_options)
@@ -56,35 +56,36 @@ target_as_input=torch.zeros(1,302)
 print("ChatBot Run!")
 
 try:
-    domanda=input("you: ")
-    domanda = re.findall(r'\w+', domanda)
-    vettoreparole=torch.FloatTensor()
+    while True:
+        domanda=input("you: ")
+        domanda = re.findall(r'\w+', domanda)
+        vettoreparole=torch.FloatTensor()
 
-    for parola in domanda:
-        try:
-            p = model[parola]
-            p = torch.from_numpy(p)
-            p = p.view(1, 300)
-            p = torch.cat([p, fineparola],1)
-        except:
-            pass
-        vettoreparole = torch.cat([vettoreparole, p])
+        for parola in domanda:
+            try:
+                p = model[parola]
+                p = torch.from_numpy(p)
+                p = p.view(1, 300)
+                p = torch.cat([p, fineparola],1)
+            except:
+                pass
+            vettoreparole = torch.cat([vettoreparole, p])
 
-    vettoreparole=vettoreparole.unsqueeze(0)
-    target_as_input=target_as_input.unsqueeze(0)
+        vettoreparole=vettoreparole.unsqueeze(0)
+        target_as_input=target_as_input.unsqueeze(0)
 
-    output, h_nuova = model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
+        output, h_nuova = model2(Variable(vettoreparole), Variable(h), Variable(target_as_input))
 
-    output=list(itertools.chain.from_iterable(output))
+        output=list(itertools.chain.from_iterable(output))
 
-    output = output[0]  #torch.FloatTensor of size 1x302
+        output = output[0]  #torch.FloatTensor of size 1x302
 
-    vettoreparole2=[]
-    output=output.data.numpy()
-    output=output[0:300]
-    uscita=model.most_similar(positive=[output], topn=1)[0][0]
-    print("uscita " + uscita)
-    h = h_nuova
+        vettoreparole2=[]
+        output=output.data.numpy()
+        output=output[0:300]
+        uscita=model.most_similar(positive=[output], topn=1)[0][0]
+        print("uscita " + uscita)
+        h = h_nuova
 
 except KeyboardInterrupt:
 	print("Bye")
