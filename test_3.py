@@ -88,7 +88,6 @@ try:
 
 except KeyboardInterrupt:
 	print("Bye")
-    pass
 
 """
     for parola in output:
