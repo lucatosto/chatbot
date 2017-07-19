@@ -88,7 +88,7 @@ class Model1(nn.Module):
                 o = o.view(-1, self.lstm_size)
                 #print(x.data.size())
                 o = self.dec_to_output(o)
-                o2=o.data.numpy()
+                o2=o.data[0].numpy()
                 o2=o2[0:300]
                 print(o2.shape)
                 o2=model.most_similar(positive=[o2], topn=1)[0][0]
