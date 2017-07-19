@@ -86,7 +86,7 @@ class Model1(nn.Module):
                 o, hc = self.decoder(input, (h, c))
                 h, c = hc
                 # Compute output
-                o=o.unsqueeze(0)
+                o=o.squeeze(0)
                 o2=o.data.numpy()
                 o2=o2[0:300]
                 o2=model.most_similar(positive=[o2], topn=1)[0][0]
