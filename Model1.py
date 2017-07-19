@@ -101,7 +101,7 @@ class Model1(nn.Module):
                 o2 = o2.view(batch_size, 1, -1)
                 output.append(o2)
                 # Compute predicted outputs
-                output_idx = o2.data.max(2)[1].squeeze()
+                output_idx = o2.data[0].max(2)[1].squeeze()
                 # Check all words are in EOS
                 # Compute input for next step    l'uscita del primo hidden layer
                 input = torch.zeros(batch_size, 1, self.input_size)
