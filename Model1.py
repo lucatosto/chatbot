@@ -73,7 +73,6 @@ class Model1(nn.Module):
         else:
             # Initialize input
             input = torch.zeros(1, 1, self.input_size)
-            input[:, :, self.sos_idx].fill_(1)
             input = Variable(input)
             if self.is_cuda:
                 input = input.cuda()
