@@ -50,7 +50,7 @@ zero = torch.FloatTensor(1,1)
 zero.fill_(0)
 fineparola = torch.cat([zero, zero], 1)
 
-h=torch.zeros(1,1,300)
+h=torch.zeros(1,1,1024)
 target_as_input=torch.zeros(1,302)
 
 print("ChatBot Run!")
