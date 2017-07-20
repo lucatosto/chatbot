@@ -110,8 +110,10 @@ class Model1(nn.Module):
                 # Check all words are in EOS
                 # Compute input for next step    l'uscita del primo hidden layer
                 input = torch.zeros(batch_size, 1, self.input_size)
+                """
                 for j in range(0, batch_size):
                     input[j, 0, output_idx[j]] = 1
+                """
                 input = Variable(input)
                 if self.is_cuda:
                     input = input.cuda(async = True)
