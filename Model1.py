@@ -92,7 +92,7 @@ class Model1(nn.Module):
 
 
 
-                o2=o.view(batch_size, 1, -1)
+                #o2=o.view(batch_size, 1, -1)
                 o2=o2.data.squeeze()
                 o2=o2.numpy()
 
