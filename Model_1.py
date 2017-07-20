@@ -98,7 +98,7 @@ class Model_1(nn.Module):
                 vettor=torch.cat((vettor, padding), 0)
                 vettor=vettor.unsqueeze(0)
                 vettor=vettor.unsqueeze(0)
-                input=vettore
+                input=vettor
                 input = Variable(input)
                 if self.is_cuda:
                    input = input.cuda(async = True)
