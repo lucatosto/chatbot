@@ -103,7 +103,7 @@ class Model1(nn.Module):
 
                 o2=o2.data[0].numpy()
                 o2=o2[0:300]
-                #print(o2.shape)
+                print(o2.shape)
                 o2=model.similar_by_vector(o2, topn=1)[0][0]
                 #o3 = model.similar_by_vector(positive=[o2], topn=1)[0][0]
                 #o3 = model[o3] #prende la parola codificata dal modello
