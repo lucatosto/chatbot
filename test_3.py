@@ -14,8 +14,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
-#from Model1 import Model1
-from Model_1 import Model_1
+from Model1 import Model1
+#from Model_1 import Model_1
 import itertools
 
 class Options():
@@ -42,8 +42,8 @@ model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-ne
 checkpoint=torch.load('checkpoint-10.pth')
 model_options=checkpoint["model_options"]
 
-model2=Model_1(**model_options)
-#model2=Model1(**model_options)
+#model2=Model_1(**model_options)
+model2=Model1(**model_options)
 model2.load_state_dict(checkpoint["model_state"])
 
 #prepare to test
@@ -81,8 +81,7 @@ try:
 
         #output = output[0]  #torch.FloatTensor of size 1x302
 
-        #vettoreparole2=[]
-        vettoreparole2=()
+        vettoreparole2=[]
         
         for parola in output:
             #parola = parola.data.numpy()
