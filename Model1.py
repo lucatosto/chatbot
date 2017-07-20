@@ -120,10 +120,10 @@ class Model1(nn.Module):
                 o2 = o2.view(batch_size, 1, -1)# da fare
 
                 #o2=o2.unsqueeze(0)
-                #o2=o2.unsqueeze(0)
+                #o2=o2.unsqueeze(0)Il criterio che guida la divisione è naturalmente quello di ottenere gruppi sempre più omogenei. L'algoritmo procede fino a che non viene so
 
                 output.append(o2)
-                #input=o2 # da eliminare?
+                input=o2 # da eliminare?
                 # Compute predicted outputs
                 #output_idx = o2.data[0].max(2)[1].squeeze()
                 # Check all words are in EOS
