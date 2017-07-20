@@ -120,8 +120,8 @@ class Model1(nn.Module):
                 o2=o2.unsqueeze(0)
                 #o2 = o2.view(batch_size, 1, -1)# da fare
 
-                output.append(o3)
-                input=o3 # da eliminare?
+                output.append(o2)
+                input=o2 # da eliminare?
                 # Compute predicted outputs
                 #output_idx = o2.data[0].max(2)[1].squeeze()
                 # Check all words are in EOS
