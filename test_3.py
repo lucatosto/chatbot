@@ -41,7 +41,8 @@ model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-ne
 checkpoint=torch.load('checkpoint-10.pth')
 model_options=checkpoint["model_options"]
 
-model2=Model1(**model_options)
+model2=Model_1(**model_options)
+#model2=Model1(**model_options)
 model2.load_state_dict(checkpoint["model_state"])
 
 #prepare to test
@@ -74,10 +75,10 @@ try:
         target_as_input=target_as_input.unsqueeze(0)
 
         output, h_nuova = model2(Variable(vettoreparole), Variable(h), None)
+        print(output)
+        #output=list(itertools.chain.from_iterable(output))
 
-        output=list(itertools.chain.from_iterable(output))
-
-        output = output[0]  #torch.FloatTensor of size 1x302
+        #output = output[0]  #torch.FloatTensor of size 1x302
 
         vettoreparole2=[]
         
