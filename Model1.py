@@ -103,7 +103,7 @@ class Model1(nn.Module):
 
                 o2=o.data[0].numpy()
                 o2=o2[0:300]
-                #print(o2.shape)
+                print(o2.shape)
                 o2=model.similar_by_vector(o2, topn=1)[0][0]
                 #o3 = model.similar_by_vector(positive=[o2], topn=1)[0][0]
                 o2 = model[o2] #prende la parola codificata dal modello
@@ -116,12 +116,13 @@ class Model1(nn.Module):
                 o2=torch.from_numpy(o2)
                 padding = torch.zeros(2)
                 o2 = torch.cat((o2, padding), 0)
-                o2=o2.unsqueeze(0)
-                o2=o2.unsqueeze(0)
-                #o2 = o2.view(batch_size, 1, -1)# da fare
+                o2 = o2.view(batch_size, 1, -1)# da fare
+
+                #o2=o2.unsqueeze(0)
+                #o2=o2.unsqueeze(0)
 
                 output.append(o2)
-                input=o2 # da eliminare?
+                #input=o2 # da eliminare?
                 # Compute predicted outputs
                 #output_idx = o2.data[0].max(2)[1].squeeze()
                 # Check all words are in EOS
