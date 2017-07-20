@@ -112,7 +112,7 @@ class Model1(nn.Module):
                 # View as sequence and add to outputs
                 #print(o3)
                 #o2=model[o2]
-                #o2=np.ndarray([1,300])
+                o3=np.ndarray([1,300])
                 o3=torch.from_numpy(o3)
                 padding = torch.zeros(2)
                 o3 = torch.cat((o3, padding), 0)
