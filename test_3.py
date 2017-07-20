@@ -81,7 +81,8 @@ try:
 
         #output = output[0]  #torch.FloatTensor of size 1x302
 
-        vettoreparole2=[]
+        #vettoreparole2=[]
+        vettoreparole2=()
         
         for parola in output:
             #parola = parola.data.numpy()
