@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 
-class Model1(nn.Module):
+class Model_1(nn.Module):
 
     def __init__(self, input_size, sos_idx, eos_idx, encoder_layers = 1, lstm_size = 128):
         # Call parent
