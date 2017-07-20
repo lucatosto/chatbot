@@ -106,7 +106,7 @@ class Model1(nn.Module):
                 #print(o2.shape)
                 o3=model.similar_by_vector(o2, topn=1)[0][0]
                 #o3 = model.similar_by_vector(positive=[o2], topn=1)[0][0]
-                o3 = model[o3] #prende la parola codificata dal modello
+                #o3 = model[o3] #prende la parola codificata dal modello
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
                 # View as sequence and add to outputs
