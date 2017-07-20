@@ -6,7 +6,7 @@ import time
 from vector import vector
 import gensim
 from gensim.models import Word2Vec
-from CornellData import CornellData
+#from CornellData import CornellData
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -38,13 +38,14 @@ class Model1(nn.Module):
         super(Model1, self).cuda()
 
     def forward(self, x, h, target_as_input):
-        model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+        model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+        #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
         # Initial state
         c_0 = Variable(torch.zeros(self.encoder_layers, batch_size, self.lstm_size))#c_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial cell state for each element in the batch
-        # Check CUDA
+        # Check CUDA 
         if self.is_cuda:
             c_0 = c_0.cuda(async = True)
         # Compute encoder output (hidden layer at last time step)
@@ -90,15 +91,19 @@ class Model1(nn.Module):
                 o = self.dec_to_output(o)
                 o2=o.data[0].numpy()
                 o2=o2[0:300]
-                print(o2.shape)
+                #print(o2.shape)
                 o2=model.similar_by_vector(o2, topn=1)[0][0]
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
                 # View as sequence and add to outputs
                 print(o2)
-                o2=np.ndarray([1,300])
+                o2=model[o2]
+                #o2=np.ndarray([1,300])
                 o2=torch.from_numpy(o2)
+                padding = torch.zeros(2)
+                o2 = torch.cat((o2, padding), 0) 
                 o2 = o2.view(batch_size, 1, -1)
+
                 output.append(o2)
                 # Compute predicted outputs
                 #output_idx = o2.data[0].max(2)[1].squeeze()

@@ -6,7 +6,6 @@ import time
 from vector import vector
 import gensim
 from gensim.models import Word2Vec
-from CornellData import CornellData
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -35,8 +34,8 @@ opt.no_cuda = True
 
 
 #load gensim model
-#model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+#model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
 
 #load my model
 checkpoint=torch.load('checkpoint-10.pth')
@@ -86,7 +85,7 @@ try:
             #parola = parola.data.numpy()
             #parola = parola[0:300]
             #uscita = model.most_similar(positive=[parola], topn=1)[0][0]
-            vettoreparole2.append(uscita)
+            vettoreparole2.append(parola)
         print("bot: " +vettoreparole2)
         h = h_nuova
 
