@@ -38,8 +38,8 @@ class Model1(nn.Module):
         super(Model1, self).cuda()
 
     def forward(self, x, h, target_as_input):
-        model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
-        #model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+        #model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
+        model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
         # Get input info
         batch_size = x.size(0)  #100
         seq_len = x.size(1)
