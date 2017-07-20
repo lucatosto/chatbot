@@ -110,7 +110,7 @@ class Model1(nn.Module):
                 # Compute log-softmax
                 #o2 = F.log_softmax(o2)
                 # View as sequence and add to outputs
-                print(o2)
+                #print(o3)
                 #o2=model[o2]
                 #o2=np.ndarray([1,300])
                 o3=torch.from_numpy(o3)
