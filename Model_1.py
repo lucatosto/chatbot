@@ -20,7 +20,7 @@ class Model_1(nn.Module):
 
     def __init__(self, input_size, sos_idx, eos_idx, encoder_layers = 1, lstm_size = 128):
         # Call parent
-        super(Model1, self).__init__()
+        super(Model_1, self).__init__()
         # Set attributes
         self.is_cuda = False
         self.input_size = 302
@@ -35,7 +35,7 @@ class Model_1(nn.Module):
 
     def cuda(self):
         self.is_cuda = True
-        super(Model1, self).cuda()
+        super(Model_1, self).cuda()
 
     def forward(self, x, h, target_as_input):
         #model = gensim.models.KeyedVectors.load_word2vec_format('/media/daniele/AF56-12AA/GoogleNews-vectors-negative300.bin', binary=True)
