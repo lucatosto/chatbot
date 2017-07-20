@@ -14,6 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
+#from Model1 import Model1
 from Model1 import Model1
 import itertools
 
@@ -72,7 +73,7 @@ try:
             vettoreparole = torch.cat([vettoreparole, p])
 
         vettoreparole=vettoreparole.unsqueeze(0)
-        target_as_input=target_as_input.unsqueeze(0)
+        #target_as_input=target_as_input.unsqueeze(0)
 
         output, h_nuova = model2(Variable(vettoreparole), Variable(h), None)
         print(output)
