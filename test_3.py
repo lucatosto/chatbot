@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import torch.optim
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 #from Model1 import Model1
-from Model1 import Model1
+from Model_1 import Model_1
 import itertools
 
 class Options():
