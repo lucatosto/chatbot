@@ -92,7 +92,7 @@ class Model1(nn.Module):
 
 
 
-                #o2=o.view(batch_size, 1, -1)
+                o2=o.view(batch_size, 1, -1)
                 #o2=o.data.squeeze()
                 #o2=o2.data.numpy()
 
@@ -101,10 +101,10 @@ class Model1(nn.Module):
 
 
 
-                o2=o.data[0].numpy()
+                o2=o2.data[0].numpy()
                 o2=o2[0:300]
                 #print(o2.shape)
-                o3=model.similar_by_vector(o2, topn=1)[0][0]
+                o2=model.similar_by_vector(o2, topn=1)[0][0]
                 #o3 = model.similar_by_vector(positive=[o2], topn=1)[0][0]
                 #o3 = model[o3] #prende la parola codificata dal modello
                 # Compute log-softmax
@@ -112,10 +112,10 @@ class Model1(nn.Module):
                 # View as sequence and add to outputs
                 #print(o3)
                 #o2=model[o2]
-                o3=np.ndarray([1,300])
-                o3=torch.from_numpy(o3)
+                #o2=np.ndarray([1,300])
+                o2=torch.from_numpy(o2)
                 padding = torch.zeros(2)
-                o3 = torch.cat((o3, padding), 0)
+                o2 = torch.cat((o, padding), 0)
                 o3=o3.unsqueeze(0)
                 o3=o3.unsqueeze(0)
                 #o2 = o2.view(batch_size, 1, -1)# da fare
