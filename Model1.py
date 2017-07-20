@@ -93,15 +93,15 @@ class Model1(nn.Module):
 
 
                 #o2=o.view(batch_size, 1, -1)
-                o2=o.data.squeeze()
-                o2=o2.data.numpy()
+                #o2=o.data.squeeze()
+                #o2=o2.data.numpy()
 
 
 
 
 
 
-                #o2=o.data[0].numpy()
+                o2=o.data[0].numpy()
                 o2=o2[0:300]
                 #print(o2.shape)
                 o3=model.similar_by_vector(o2, topn=1)[0][0]
