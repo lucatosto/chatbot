@@ -116,8 +116,8 @@ class Model1(nn.Module):
                 o2=torch.from_numpy(o2)
                 padding = torch.zeros(2)
                 o2 = torch.cat((o2, padding), 0)
-                o3=o3.unsqueeze(0)
-                o3=o3.unsqueeze(0)
+                o2=o2.unsqueeze(0)
+                o2=o2.unsqueeze(0)
                 #o2 = o2.view(batch_size, 1, -1)# da fare
 
                 output.append(o3)
